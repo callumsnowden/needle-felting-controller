@@ -12,15 +12,18 @@ struct Button
     }
     if((millis() - lastDebounceTime) > debounceDelay)
     {
-      if(reading != lastButtonState)
+      if(reading != buttonState)
       {
-        currentState = reading;
+        buttonState = reading;
+
+        currentState = buttonState;
       }
     }
     lastButtonState = reading;
   }
   private:
-    uint8_t reading;
-    uint8_t lastButtonState;
-    uint32_t lastDebounceTime;
+    uint8_t reading = 0;
+    uint8_t buttonState = 0;
+    uint8_t lastButtonState = LOW;
+    unsigned long lastDebounceTime = 0;
 };

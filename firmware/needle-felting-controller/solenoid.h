@@ -1,6 +1,6 @@
 struct Solenoid
 {
-  uint8_t activationTime = 100;
+  uint16_t activationTime = 100;
   uint8_t pin;
   void fire()
   {
@@ -43,7 +43,9 @@ struct Solenoid
      * Frequency is specified in punches/min and we need milliseconds to wait
      * Accounts for 2x activation time to allow for piston extension and retraction (assuming rougly equivalent)
      */
-    interPulseDelay = ((60 / frequency) * 1000) - activationTime * 2;
+    interPulseDelay = 60 / (float)frequency;
+    interPulseDelay = interPulseDelay * 1000;
+    interPulseDelay =  interPulseDelay - (activationTime * 2);
     cyclicMode = true;
     if(!stopped)
     {
@@ -76,7 +78,7 @@ struct Solenoid
 
     uint8_t cyclicMode = false;
     uint8_t inCycle = false;
-    uint32_t lastSingleActivationMillis;
-    uint32_t lastCycleEndMillis;
-    uint16_t interPulseDelay;
+    unsigned long lastSingleActivationMillis = 0;
+    unsigned long lastCycleEndMillis = 0;
+    float interPulseDelay = 0.0;
 };
