@@ -39,7 +39,7 @@ movingAvg frequencyPotAvg(5);
 const float gearboxRatio = 4.25; // 1:4.25
 const uint16_t microsteps = 400;
 const uint16_t stepsPerRev = microsteps * gearboxRatio;
-const float rollerDiameter = 25.4; // in mm
+const float rollerDiameter = 40.0; // in mm
 volatile float motorRequiredSpeed = 0.0;
 
 // LCD geometry
