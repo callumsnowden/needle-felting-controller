@@ -29,6 +29,9 @@ Solenoid punchValve;
 
 MachineState state;
 
+// Uncomment the below line to enable serial printing of states
+//#define DEBUG
+
 #define WIRECLOCK 400000L
 hd44780_I2Clcd lcd(0x3C); // 0x3C address as per datasheet & wired configuration
 char lcdString[21] = {0}; // empty string for temporary usage by LCD updating code
@@ -127,7 +130,9 @@ void loop() {
       // Check and update state
       if(startButton.currentState == HIGH) 
       {
+        #ifdef DEBUG
         Serial.println("Moving to state starting");
+        #endif
         lcd.setCursor(0, 0);
         lcd.print("Starting");
         lcd.setCursor(0, 3);
@@ -149,7 +154,9 @@ void loop() {
       {
         lcd.setCursor(0, 0);
         lcd.print("Running!");
+        #ifdef DEBUG
         Serial.println("Moving to state running");
+        #endif
         punchValve.fireCycle(punchFrequency);
         state = STATE_RUNNING;
       }
@@ -159,7 +166,9 @@ void loop() {
       // Jump state if cylinder is in-cycle
       if(punchValve.getCycleState() == true)
       {
+        #ifdef DEBUG
         Serial.println("Moving to state punching");
+        #endif
         state = STATE_PUNCHING;
       }
       // Move to stopping state
@@ -167,7 +176,9 @@ void loop() {
       {
         lcd.setCursor(0, 0);
         lcd.print("Stopping");
+        #ifdef DEBUG
         Serial.println("Moving to state stopping");
+        #endif
         state = STATE_STOPPING;
       }
       break;
@@ -176,7 +187,9 @@ void loop() {
       // Revert back to running state when cylinder retracted
       if(punchValve.getCycleState() == false)
       {
+        #ifdef DEBUG
         Serial.println("Moving to state running");
+        #endif
         state = STATE_RUNNING;
       }
       break;
@@ -187,7 +200,9 @@ void loop() {
 
       if(roller.speed() == 0)
       {
+        #ifdef DEBUG
         Serial.println("Moving to state idle from stopping");
+        #endif
         state = STATE_IDLE;
       }
       break;
@@ -197,7 +212,9 @@ void loop() {
       // Adjust state if command finished
       if(jogFwdButton.currentState == LOW)
       {
+        #ifdef DEBUG
         Serial.println("Moving to state idle from jog forward");
+        #endif
         roller.stop();
         state = STATE_IDLE;
       }
@@ -208,7 +225,9 @@ void loop() {
       // Adjust state if command finished
       if(jogBackButton.currentState == LOW)
       {
+        #ifdef DEBUG
         Serial.println("Moving to state idle from jog back");
+        #endif
         roller.stop();
         state = STATE_IDLE;
       }
@@ -274,7 +293,9 @@ void loop() {
   // Bump states from other inputs
   if(jogFwdButton.currentState == HIGH && state == STATE_IDLE)
   {
+    #ifdef DEBUG
     Serial.println("Moving to state jog forward");
+    #endif
     state = STATE_JOG_FWD;
     lcd.setCursor(0, 3);
     lcd.print("Jog forward");
@@ -282,7 +303,9 @@ void loop() {
 
   if(jogBackButton.currentState == HIGH && state == STATE_IDLE)
   {
+    #ifdef DEBUG
     Serial.println("Moving to state jog back");
+    #endif
     state = STATE_JOG_BCK;
     lcd.setCursor(0, 3);
     lcd.print("Jog back");
@@ -291,7 +314,9 @@ void loop() {
   // Move to emergency state if 
   if(safetyFeedbackButton.currentState == HIGH && state != STATE_EMERGENCY)
   {
+    #ifdef DEBUG
     Serial.println("Moving to state emergency");
+    #endif
     state = STATE_EMERGENCY;
     lcd.setCursor(0, 3);
     lcd.print("Emergency stop!");

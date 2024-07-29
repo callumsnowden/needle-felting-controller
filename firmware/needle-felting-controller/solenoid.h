@@ -1,6 +1,6 @@
 struct Solenoid
 {
-  uint16_t activationTime = 100;
+  uint16_t activationTime = 95;
   uint8_t pin;
   void fire()
   {
@@ -15,7 +15,7 @@ struct Solenoid
     if(!cyclicMode)
     {
       // Update single shot state
-      if(millis() - lastSingleActivationMillis > activationTime)
+      if(millis() - lastSingleActivationMillis > activationTime * 2)
       {
         digitalWrite(pin, LOW);
       }
@@ -46,6 +46,13 @@ struct Solenoid
     interPulseDelay = 60 / (float)frequency;
     interPulseDelay = interPulseDelay * 1000;
     interPulseDelay =  interPulseDelay - (activationTime * 2);
+    Serial.print("Interpulse delay: ");
+    Serial.println(interPulseDelay);
+    if(frequency > 150) {
+      activationTime = 70;
+    } else {
+      activationTime = 95;
+    }
     cyclicMode = true;
     if(!stopped)
     {
